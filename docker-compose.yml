@@ -1,0 +1,18 @@
+version: "2"
+services:
+    springboot-wmq-sender-listener:
+        build:
+            context: ./
+            dockerfile: Dockerfile
+        ports:
+        - "8080"
+        environment:
+        #Common Properties
+        - JAVA_OPTS=-Xms512m -Xmx2048m -Djava.net.preferIPv4Stack=true -Djava.awt.headless=true
+        #Local Properties
+        - ENV_NAME=dev
+        - WMQ_HOST_NAME=<YOUR-WMQ_HOST_NAME>
+        - WMQ_PORT_NUM=<YOUR-WMQ_PORT_NUM>
+        - WMQ_QUEUE_MGR=<YOUR-WMQ_QUEUE_MGR>
+        - WMQ_CHANNEL=<YOUR-WMQ_CHANNEL>
+        - WMQ_QUEUE_NAME=<YOUR-WMQ_QUEUE_NAME>

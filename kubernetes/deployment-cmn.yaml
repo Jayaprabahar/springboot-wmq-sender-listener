@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${INSTANCE}
+  labels:
+    app.kubernetes.io/name: springboot-wmq-sender-listener
+    app.kubernetes.io/instance: ${INSTANCE}
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1                   # allow max 1 new/extra pods at a time when rolling
+      maxUnavailable: 0             # allow max 0 pod to be unavailable while the new one is not yet available
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: springboot-wmq-sender-listener
+      app.kubernetes.io/instance: ${INSTANCE}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: springboot-wmq-sender-listener
+        app.kubernetes.io/instance: ${INSTANCE}
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '8080'
+        prometheus.io/path: '/metrics'
+    spec:
+      terminationGracePeriodSeconds: 30
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: springboot-wmq-sender-listener
+                  app.kubernetes.io/instance: ${INSTANCE}
+      containers:
+      - name: springboot-wmq-sender-listener
+        image: <docker-registry-location-of-your-application>:${VERSION}
+        resources:
+          requests:
+            cpu: 0.3
+        env:
+        # environment specific properties
+        - name: ENV_NAME
+          value: 'dev'
+        - name: LOG_LEVEL
+          value: 'INFO'
+        - name: WMQ_HOST_NAME
+          value: '<YOUR-WMQ_HOST_NAME>'
+        - name: WMQ_PORT_NUM
+          value: '<YOUR-WMQ_PORT_NUM>'        
+        - name: WMQ_QUEUE_MGR
+          value: '<YOUR-WMQ_QUEUE_MGR>'         
+        - name: WMQ_CHANNEL
+          value: '<YOUR-WMQ_CHANNEL>'
+        - name: WMQ_QUEUE_NAME
+          value: '<WMQ_QUEUE_NAME>'
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /infra/healthcheck
+            port: 8080
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        lifecycle:
+          preStop:
+            exec:
+              command: ["sleep", "5"]
