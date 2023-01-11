@@ -1,0 +1,44 @@
+spring:
+  main:
+    allow-circular-references: true
+
+# Websphere MQ Configurations
+logging:
+  level:
+    com:
+      ibm:
+        mq:
+          spring:
+            boot: TRACE
+
+WMQ_CHANNEL:
+WMQ_QUEUE_MGR:
+WMQ_HOST_NAME:
+WMQ_PORT_NUM:
+WMQ_QUEUE_NAME:
+sslInstanceType: TLS
+
+javax:
+  net:
+    ssl:
+      keyStore: classpath:wmq/mqclient.p12
+      keyStorePass: changeit
+      trustStore: classpath:wmq/mqclient.p12
+      trustStorePass: changeit
+#trust_all_cert: true
+
+ibm:
+  mq:
+    channel:
+    queueManager:
+    connName:
+    sslCipherSpec:
+    user:
+    password:
+    use-i-b-m-cipher-mappings: false
+    use-authentication-m-q-c-s-p: false
+    sslCipherSuite : ANY_TLS12
+
+#  Steps for generating JKS
+#  openssl pkcs12 -export -in certificate.pem -inkey certificate.key -certfile certificate.pem -out mqclient.p12 -passout pass:changeit
+#  keytool -importkeystore -srckeystore mqclient.p12 -srcstoretype pkcs12 -destkeystore mqclient.jks -deststoretype JKS
