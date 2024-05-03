@@ -22,7 +22,7 @@
 		<spring.boot.mainclass>com.jayaprabahar.springboot.wmq.SpringbootMqListenerApplication</spring.boot.mainclass>
 		<java.version>11</java.version>
 		<spring.boot.dependencies.version>2.3.0.RELEASE</spring.boot.dependencies.version>
-		<springboot.ibmmq.version>3.0.0</springboot.ibmmq.version>
+		<springboot.ibmmq.version>3.2.3</springboot.ibmmq.version>
 	</properties>
 
 	<dependencies>
